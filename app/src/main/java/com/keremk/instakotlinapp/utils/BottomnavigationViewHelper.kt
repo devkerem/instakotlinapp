@@ -7,10 +7,10 @@ import android.view.MenuItem
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
 import com.keremk.instakotlinapp.Home.HomeActivity
 import com.keremk.instakotlinapp.News.NewsActivity
-import com.keremk.instakotlinapp.Profile.ProfileActivity
 import com.keremk.instakotlinapp.R
 import com.keremk.instakotlinapp.Search.SearchActivity
 import com.keremk.instakotlinapp.Share.ShareActivity
+import com.keremk.instakotlinapp.Profile.ProfileActivity
 
 class BottomnavigationViewHelper {
     companion object {
