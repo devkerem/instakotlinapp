@@ -2,7 +2,7 @@ package com.keremk.instakotlinapp.utils
 
 import android.content.Context
 import android.content.Intent
-import android.support.design.widget.BottomNavigationView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import android.view.MenuItem
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
 import com.keremk.instakotlinapp.Home.HomeActivity
@@ -12,7 +12,7 @@ import com.keremk.instakotlinapp.Search.SearchActivity
 import com.keremk.instakotlinapp.Share.ShareActivity
 import com.keremk.instakotlinapp.Profile.ProfileActivity
 
-class BottomnavigationViewHelper {
+class BottomNavigationViewHelper {
     companion object {
         fun setupBottomNavigationView(bottomnavigationViewEx: BottomNavigationViewEx) {
             bottomnavigationViewEx.enableItemShiftingMode(true)

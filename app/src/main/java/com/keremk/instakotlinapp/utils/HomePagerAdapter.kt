@@ -1,10 +1,10 @@
 package com.keremk.instakotlinapp.utils
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 
-class HomePagerAdapter(fm:FragmentManager) : FragmentPagerAdapter(fm) {
+class HomePagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
     private val mFragmentList: ArrayList<Fragment> = ArrayList()
     override fun getItem(position: Int): Fragment {
         return mFragmentList.get(position)

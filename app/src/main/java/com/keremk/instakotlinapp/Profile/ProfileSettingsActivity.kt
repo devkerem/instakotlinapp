@@ -1,10 +1,10 @@
 package com.keremk.instakotlinapp.Profile
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import com.keremk.instakotlinapp.R
-import com.keremk.instakotlinapp.utils.BottomnavigationViewHelper
+import com.keremk.instakotlinapp.utils.BottomNavigationViewHelper
 import kotlinx.android.synthetic.main.activity_profile_settings.*
 
 class ProfileSettingsActivity : AppCompatActivity() {
@@ -24,10 +24,10 @@ class ProfileSettingsActivity : AppCompatActivity() {
     private fun fragmentNavigations() {
         tvProfilDuzenleHesapAyarlari.setOnClickListener {
             profileSettingsRoot.visibility = View.GONE
-            var transaction=supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.profileSettingsContainer,ProfileEditFragment())
-            transaction.addToBackStack("signOutFragmentEklendi")
-            transaction.commit()
+
+            var dialog=ProfileSignOutFragment()
+            dialog.show(supportFragmentManager,"cikisYapDialogGoster")
+
         }
         tvCikisYap.setOnClickListener {
             profileSettingsRoot.visibility = View.GONE
@@ -51,8 +51,8 @@ class ProfileSettingsActivity : AppCompatActivity() {
 
     fun setupNavigationView(){
 //
-        BottomnavigationViewHelper.setupBottomNavigationView(bottomNavigationView)
-        BottomnavigationViewHelper.setupNavigation(this, bottomNavigationView)
+        BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationView)
+        BottomNavigationViewHelper.setupNavigation(this, bottomNavigationView)
         var menu=bottomNavigationView.menu
         var menuItem=menu.getItem(ACTIVITY_NO)
         menuItem.setChecked(true)

@@ -1,4 +1,4 @@
-package com.keremk.instakotlinapp.Home
+package com.keremk.instakotlinapp.Share
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,13 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import com.keremk.instakotlinapp.R
 
-class HomeFragment : Fragment() {
+class ShareGalleryFragment : Fragment() {
+
+
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view =inflater.inflate(R.layout.fragment_home,container,false)
-        return view
+        return inflater.inflate(R.layout.fragment_share_gallery, container, false)
     }
+
 }

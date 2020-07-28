@@ -1,9 +1,9 @@
 package com.keremk.instakotlinapp.Share
 
-import  android.support.v7.app.AppCompatActivity
+import  androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.keremk.instakotlinapp.R
-import com.keremk.instakotlinapp.utils.BottomnavigationViewHelper
+import com.keremk.instakotlinapp.utils.BottomNavigationViewHelper
 import kotlinx.android.synthetic.main.activity_home.*
 
 class ShareActivity : AppCompatActivity() {
@@ -11,13 +11,13 @@ class ShareActivity : AppCompatActivity() {
     private val TAG="Share Activity"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        setContentView(R.layout.activity_share)
         setupNavigationView()
     }
 
-    fun setupNavigationView() {
-        BottomnavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx)
-        BottomnavigationViewHelper.setupNavigation(this,bottomNavigationViewEx)
+    private fun setupNavigationView() {
+        BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx)
+        BottomNavigationViewHelper.setupNavigation(this,bottomNavigationViewEx)
         var menu = bottomNavigationViewEx.menu
         var menuItem = menu.getItem(ACTIVITY_NO)
         menuItem.setChecked(true)
