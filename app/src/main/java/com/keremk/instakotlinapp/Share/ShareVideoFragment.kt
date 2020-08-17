@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bumptech.glide.Glide
 import com.keremk.instakotlinapp.R
 import kotlinx.android.synthetic.main.fragment_share_gallery.view.*
 import kotlinx.android.synthetic.main.fragment_share_video.view.*
@@ -17,7 +16,6 @@ class ShareVideoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view:View = inflater.inflate(R.layout.fragment_share_video, container, false)
-        Glide.with(activity!!.applicationContext).load("https://www.videoexpert.eu/f/pics/57568/JVC-GY-HC500E-9_o.jpg").into(view.imageViewGallery);
         return view
     }
 

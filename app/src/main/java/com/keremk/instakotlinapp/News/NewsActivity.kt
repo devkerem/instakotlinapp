@@ -13,14 +13,14 @@ class NewsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        setupNavigationView()
+//        setupNavigationView()
     }
 
-    fun setupNavigationView() {
+/*    fun setupNavigationView() {
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx)
         BottomNavigationViewHelper.setupNavigation(this,bottomNavigationViewEx)
         var menu = bottomNavigationViewEx.menu
         var menuItem = menu.getItem(ACTIVITY_NO)
         menuItem.setChecked(true)
-    }
+    }*/
 }

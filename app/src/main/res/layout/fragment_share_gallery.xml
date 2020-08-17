@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/constraintlayout"
@@ -15,9 +16,9 @@
         android:background="@color/toolbar_color"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
+        app:contentInsetStart="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:contentInsetStart="0dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -37,23 +38,24 @@
 
             <TextView
                 android:id="@+id/tvIleriButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:padding="5dp"
                 android:text="İleri"
                 android:textColor="@color/mavi"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toBottomOf="@+id/imgClose"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/imgClose" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <Spinner
                 android:id="@+id/spnKlasorAdlari"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toBottomOf="@+id/imgClose"
                 app:layout_constraintStart_toEndOf="@+id/imgClose"
                 app:layout_constraintTop_toTopOf="@+id/imgClose" />
@@ -65,9 +67,8 @@
                 android:background="@color/golgelik"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 
     </androidx.appcompat.widget.Toolbar>
@@ -80,35 +81,56 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
-        <ImageView
+        <FrameLayout
             android:id="@+id/imgBuyukResim"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="1dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/defaultealogo"
-            app:layout_constraintBottom_toTopOf="@+id/gridResimler"
+            app:layout_constraintBottom_toTopOf="@+id/recyclerViewDosyalar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.5"
             app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <GridView
-            android:id="@+id/gridResimler"
+
+            <com.naver.android.helloyako.imagecrop.view.ImageCropView xmlns:imagecrop="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/imageCropView"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="match_parent"
+                imagecrop:gridInnerColor="#66ffffff"
+                imagecrop:gridInnerStroke="1dp"
+                imagecrop:gridOuterColor="#ffffff"
+                imagecrop:gridOuterStroke="1dp"
+                imagecrop:outsideLayerColor="#99000000"
+                imagecrop:setInnerGridMode="on"
+                imagecrop:setOuterGridMode="on" />
+
+            <com.universalvideoview.UniversalVideoView
+                android:id="@+id/videoView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                app:uvv_autoRotation="true"
+                app:uvv_fitXY="false" />
+
+        </FrameLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewDosyalar"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="1dp"
             android:layout_marginBottom="1dp"
-            android:numColumns="3"
-            android:verticalSpacing="1dp"
+            android:gravity="center"
             android:horizontalSpacing="1dp"
+            android:verticalSpacing="1dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHeight_percent="0.4"
-            app:layout_constraintTop_toBottomOf="@+id/imgBuyukResim "
-            tools:layout_editor_absoluteX="1dp"
-            android:gravity="center"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/imgBuyukResim"
+            tools:layout_editor_absoluteX="1dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

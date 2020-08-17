@@ -36,8 +36,7 @@ class ProfileEditFragment : Fragment() {
     val RESIM_SEC = 100
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_profile_edit, container, false)
 
@@ -61,54 +60,53 @@ class ProfileEditFragment : Fragment() {
             var profilGuncellendiMi = false
 
             if (!gelenKullaniciBilgileri!!.adi_soyadi!!.equals(
-                            view.etProfileName.text.toString())) {
-                mDatabaseRef.child("users").child(gelenKullaniciBilgileri!!.user_id.toString())
-                        .child("adi_soyadi").setValue(view.etProfileName.text.toString())
+                    view.etProfileName.text.toString()
+                )
+            ) {
+                mDatabaseRef.child("users").child(gelenKullaniciBilgileri!!.user_id.toString()).child("adi_soyadi").setValue(view.etProfileName.text.toString())
                 profilGuncellendiMi = true
             }
 
             if (!gelenKullaniciBilgileri!!.user_detail!!.biography!!.equals(
-                            view.etUserBio.text.toString())) {
-                mDatabaseRef.child("users").child(gelenKullaniciBilgileri!!.user_id.toString())
-                        .child("user_detail").child("biography")
-                        .setValue(view.etUserBio.text.toString())
+                    view.etUserBio.text.toString()
+                )
+            ) {
+                mDatabaseRef.child("users").child(gelenKullaniciBilgileri!!.user_id.toString()).child("user_detail").child("biography").setValue(view.etUserBio.text.toString())
                 profilGuncellendiMi = true
             }
 
             if (!gelenKullaniciBilgileri!!.user_detail!!.web_site!!.equals(
-                            view.etUserWebSite.text.toString())) {
-                mDatabaseRef.child("users").child(gelenKullaniciBilgileri!!.user_id.toString())
-                        .child("user_detail").child("web_site")
-                        .setValue(view.etUserWebSite.text.toString())
+                    view.etUserWebSite.text.toString()
+                )
+            ) {
+                mDatabaseRef.child("users").child(gelenKullaniciBilgileri!!.user_id.toString()).child("user_detail").child("web_site").setValue(view.etUserWebSite.text.toString())
                 profilGuncellendiMi = true
             }
 
             if (!gelenKullaniciBilgileri!!.user_name!!.equals(view.etUserName.text.toString())) {
-                mDatabaseRef.child("users").orderByChild("user_name")
-                        .addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onCancelled(p0: DatabaseError) {
-                            }
+                mDatabaseRef.child("users").orderByChild("user_name").addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onCancelled(p0: DatabaseError) {
+                        }
 
-                            override fun onDataChange(p0: DataSnapshot) {
-                                var userNameKullanimdaMi = false
-                                for (ds in p0!!.children) {
-                                    var okunanKullaniciAdi = ds!!.getValue(Users::class.java)!!.user_name
-                                    if (okunanKullaniciAdi!!.equals(view.etUserName.text.toString())) {
-                                        Toast.makeText(activity,"Kullanıcı adı Kullanımda",Toast.LENGTH_SHORT).show()
-                                        userNameKullanimdaMi = true
-                                        break
-                                    }
-                                }
-
-                                if (userNameKullanimdaMi == false) {
-                                    mDatabaseRef.child("users")
-                                            .child(gelenKullaniciBilgileri!!.user_id.toString())
-                                            .child("user_name")
-                                            .setValue(view.etUserName.text.toString())
-                                    profilGuncellendiMi = true
+                        override fun onDataChange(p0: DataSnapshot) {
+                            var userNameKullanimdaMi = false
+                            for (ds in p0!!.children) {
+                                var okunanKullaniciAdi = ds!!.getValue(Users::class.java)!!.user_name
+                                if (okunanKullaniciAdi!!.equals(view.etUserName.text.toString())) {
+                                    Toast.makeText(
+                                        activity, "Kullanıcı adı Kullanımda", Toast.LENGTH_SHORT
+                                    ).show()
+                                    userNameKullanimdaMi = true
+                                    break
                                 }
                             }
-                        })
+
+                            if (userNameKullanimdaMi == false) {
+                                mDatabaseRef.child("users").child(gelenKullaniciBilgileri!!.user_id.toString()).child("user_name").setValue(view.etUserName.text.toString())
+                                profilGuncellendiMi = true
+                            }
+                        }
+                    })
             }
 
             Toast.makeText(activity, "Kullanıcı güncellendi", Toast.LENGTH_SHORT).show()
@@ -116,10 +114,7 @@ class ProfileEditFragment : Fragment() {
 
                 var dialogYukleniyor = YukleniyorFragment()
                 dialogYukleniyor.show(activity!!.supportFragmentManager, "yukleniyorFragmenti")
-                var storageReference =
-                        mStorageRef.child("users")
-                                .child(gelenKullaniciBilgileri!!.user_id.toString()!!)
-                                .child(profilPhotoUri!!.lastPathSegment.toString())
+                var storageReference = mStorageRef.child("users").child(gelenKullaniciBilgileri!!.user_id.toString()!!).child(profilPhotoUri!!.lastPathSegment.toString())
                 var file = storageReference.putFile(profilPhotoUri!!);
                 file.addOnCompleteListener { p0 -> //                            val downloadUrl: Uri = p0.result.
                     if (p0!!.isSuccessful) {
@@ -127,28 +122,24 @@ class ProfileEditFragment : Fragment() {
                         storageReference.downloadUrl.addOnSuccessListener { uri ->
                             Toast.makeText(context, uri.toString(), Toast.LENGTH_LONG)
                             Log.e("///////*/*", uri.toString())
-                        Log.e("******---", "geldiiiiii")
-                        Log.e("******", p0.result.toString())
-                        Toast.makeText(activity,"Resim yüklendi" + p0!!.getResult()?.storage?.downloadUrl.toString(),
-                                Toast.LENGTH_LONG
-                        ).show()
+                            Log.e("******---", "geldiiiiii")
+                            Log.e("******", p0.result.toString())
+                            Toast.makeText(
+                                activity, "Resim yüklendi" + p0!!.getResult()?.storage?.downloadUrl.toString(), Toast.LENGTH_LONG
+                            ).show()
 
-                        mDatabaseRef.child("users")
-                                .child(gelenKullaniciBilgileri!!.user_id.toString())
-                                .child("user_detail").child("profile_picture")
-                                .setValue(uri.toString())
-                        println(uri.toString())
-                        profilGuncellendiMi = true
+                            mDatabaseRef.child("users").child(gelenKullaniciBilgileri!!.user_id.toString()).child("user_detail").child("profile_picture").setValue(uri.toString())
+                            println(uri.toString())
+                            profilGuncellendiMi = true
 
-                        dialogYukleniyor.dismiss()
+                            dialogYukleniyor.dismiss()
                         }
                     }
-                }
-                        .addOnFailureListener(object : OnFailureListener {
-                            override fun onFailure(p0: Exception) {
-                                Log.e("HATA", p0!!.message.toString())
-                            }
-                        });
+                }.addOnFailureListener(object : OnFailureListener {
+                        override fun onFailure(p0: Exception) {
+                            Log.e("HATA", p0!!.message.toString())
+                        }
+                    });
             }
 
             if (profilGuncellendiMi == true) {
@@ -165,8 +156,8 @@ class ProfileEditFragment : Fragment() {
 
         if (requestCode == RESIM_SEC && resultCode == AppCompatActivity.RESULT_OK && data!!.data != null) {
 
-            var profilResimURI = data!!.data
-            profilPhotoUri = data!!.data!!
+            var profilResimURI = data.data
+            profilPhotoUri = data.data!!
 
             circleProfileImage.setImageURI(profilResimURI)
             circleProfileImage.setImageURI(profilPhotoUri)
@@ -187,9 +178,9 @@ class ProfileEditFragment : Fragment() {
     }
 
     //////////////////////////// EVENTBUS /////////////////////////////////
-    @Subscribe(sticky = true)
-    internal fun onKullaniciBilgileriEvent(
-            kullaniciBilgileri: EventbusDataEvents.KullaniciBilgileriniGonder) {
+    @Subscribe(sticky = true) internal fun onKullaniciBilgileriEvent(
+        kullaniciBilgileri: EventbusDataEvents.KullaniciBilgileriniGonder
+    ) {
         gelenKullaniciBilgileri = kullaniciBilgileri!!.kullanici!!
     }
 

@@ -11,32 +11,32 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import com.keremk.instakotlinapp.Home.HomeActivity
 import com.keremk.instakotlinapp.Models.Users
 import com.keremk.instakotlinapp.R
 import com.keremk.instakotlinapp.utils.EventbusDataEvents
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_register.*
 import org.greenrobot.eventbus.EventBus
 
 class RegisterActivity : AppCompatActivity(), FragmentManager.OnBackStackChangedListener {
 
 
-    lateinit var manager:FragmentManager
-    lateinit var mRef:DatabaseReference
+    lateinit var manager: FragmentManager
+    lateinit var mRef: DatabaseReference
     lateinit var mAuth: FirebaseAuth
-    lateinit var mAuthListener:FirebaseAuth.AuthStateListener
+    lateinit var mAuthListener: FirebaseAuth.AuthStateListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
         setupAuthListener()
-        mAuth= FirebaseAuth.getInstance()
-        mRef=FirebaseDatabase.getInstance().reference
+        mAuth = FirebaseAuth.getInstance()
+        mRef = FirebaseDatabase.getInstance().reference
 
-        manager=supportFragmentManager
+        manager = supportFragmentManager
         manager.addOnBackStackChangedListener(this)
         init()
 
@@ -45,7 +45,7 @@ class RegisterActivity : AppCompatActivity(), FragmentManager.OnBackStackChanged
     private fun init() {
 
         tvGirisYap.setOnClickListener {
-            var intent= Intent(this@RegisterActivity,LoginActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            var intent = Intent(this@RegisterActivity, LoginActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
             startActivity(intent)
             finish()
 
@@ -58,8 +58,8 @@ class RegisterActivity : AppCompatActivity(), FragmentManager.OnBackStackChanged
             etGirisYontemi.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
             etGirisYontemi.setHint("E-Posta")
 
-            btnIleri.isEnabled=false
-            btnIleri.setTextColor(ContextCompat.getColor(this@RegisterActivity,R.color.sonukmavi))
+            btnIleri.isEnabled = false
+            btnIleri.setTextColor(ContextCompat.getColor(this@RegisterActivity, R.color.sonukmavi))
             btnIleri.setBackgroundResource(R.drawable.register_button)
 
         }
@@ -71,8 +71,8 @@ class RegisterActivity : AppCompatActivity(), FragmentManager.OnBackStackChanged
             etGirisYontemi.inputType = InputType.TYPE_CLASS_PHONE
             etGirisYontemi.setHint("Telefon")
 
-            btnIleri.isEnabled=false
-            btnIleri.setTextColor(ContextCompat.getColor(this@RegisterActivity,R.color.sonukmavi))
+            btnIleri.isEnabled = false
+            btnIleri.setTextColor(ContextCompat.getColor(this@RegisterActivity, R.color.sonukmavi))
             btnIleri.setBackgroundResource(R.drawable.register_button)
 
         }
@@ -90,13 +90,13 @@ class RegisterActivity : AppCompatActivity(), FragmentManager.OnBackStackChanged
 
                 if (s!!.length >= 10) {
 
-                    btnIleri.isEnabled=true
-                    btnIleri.setTextColor(ContextCompat.getColor(this@RegisterActivity,R.color.beyaz))
+                    btnIleri.isEnabled = true
+                    btnIleri.setTextColor(ContextCompat.getColor(this@RegisterActivity, R.color.beyaz))
                     btnIleri.setBackgroundResource(R.drawable.register_button_aktif)
-                }else {
+                } else {
 
-                    btnIleri.isEnabled=false
-                    btnIleri.setTextColor(ContextCompat.getColor(this@RegisterActivity,R.color.sonukmavi))
+                    btnIleri.isEnabled = false
+                    btnIleri.setTextColor(ContextCompat.getColor(this@RegisterActivity, R.color.sonukmavi))
                     btnIleri.setBackgroundResource(R.drawable.register_button)
                 }
             }
@@ -105,53 +105,53 @@ class RegisterActivity : AppCompatActivity(), FragmentManager.OnBackStackChanged
 
         btnIleri.setOnClickListener {
 
-            if(etGirisYontemi.hint.toString().equals("Telefon")){
+            if (etGirisYontemi.hint.toString().equals("Telefon")) {
 
-                var ceptelefonuKullanimdaMi=false
+                var ceptelefonuKullanimdaMi = false
 
-                if(isValidTelefon(etGirisYontemi.text.toString())){
+                if (isValidTelefon(etGirisYontemi.text.toString())) {
 
-                    mRef.child("users").addListenerForSingleValueEvent(object : ValueEventListener{
+                    mRef.child("users").addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onCancelled(p0: DatabaseError) {
 
                         }
 
                         override fun onDataChange(p0: DataSnapshot) {
 
-                            if(p0!!.getValue()!=null){
+                            if (p0!!.getValue() != null) {
 
-                                for(user in p0!!.children){
+                                for (user in p0!!.children) {
 
-                                    var okunanKullanici=user.getValue(Users::class.java)
-                                    if(okunanKullanici!!.phone_number!!.equals(etGirisYontemi.text.toString())){
-                                        Toast.makeText(this@RegisterActivity,"Telefon numarası Kullanımda",Toast.LENGTH_SHORT).show()
-                                        ceptelefonuKullanimdaMi=true
+                                    var okunanKullanici = user.getValue(Users::class.java)
+                                    if (okunanKullanici!!.phone_number!!.equals(etGirisYontemi.text.toString())) {
+                                        Toast.makeText(this@RegisterActivity, "Telefon numarası Kullanımda", Toast.LENGTH_SHORT).show()
+                                        ceptelefonuKullanimdaMi = true
                                         break
                                     }
 
                                 }
 
-                                if(ceptelefonuKullanimdaMi==false){
-                                    loginRoot.visibility=View.GONE
-                                    loginContainer.visibility=View.VISIBLE
-                                    var transaction=supportFragmentManager.beginTransaction()
-                                    transaction.replace(R.id.loginContainer,TelefonKoduGirFragment())
+                                if (ceptelefonuKullanimdaMi == false) {
+                                    loginRoot.visibility = View.GONE
+                                    loginContainer.visibility = View.VISIBLE
+                                    var transaction = supportFragmentManager.beginTransaction()
+                                    transaction.replace(R.id.loginContainer, TelefonKoduGirFragment())
                                     transaction.addToBackStack("telefonKoduGirFragmentEklendi")
                                     transaction.commit()
-                                    EventBus.getDefault().postSticky(EventbusDataEvents.KayitBilgileriniGonder(etGirisYontemi.text.toString(),null,null,null, false))
+                                    EventBus.getDefault().postSticky(EventbusDataEvents.KayitBilgileriniGonder(etGirisYontemi.text.toString(), null, null, null, false))
                                 }
 
                             }
                             //veritabanında herhangi bir kullanıcı yok, direk kaydediliriz
-                            else{
+                            else {
 
-                                loginRoot.visibility=View.GONE
-                                loginContainer.visibility=View.VISIBLE
-                                var transaction=supportFragmentManager.beginTransaction()
-                                transaction.replace(R.id.loginContainer,TelefonKoduGirFragment())
+                                loginRoot.visibility = View.GONE
+                                loginContainer.visibility = View.VISIBLE
+                                var transaction = supportFragmentManager.beginTransaction()
+                                transaction.replace(R.id.loginContainer, TelefonKoduGirFragment())
                                 transaction.addToBackStack("telefonKoduGirFragmentEklendi")
                                 transaction.commit()
-                                EventBus.getDefault().postSticky(EventbusDataEvents.KayitBilgileriniGonder(etGirisYontemi.text.toString(),null,null,null, false))
+                                EventBus.getDefault().postSticky(EventbusDataEvents.KayitBilgileriniGonder(etGirisYontemi.text.toString(), null, null, null, false))
                             }
 
                         }
@@ -159,62 +159,52 @@ class RegisterActivity : AppCompatActivity(), FragmentManager.OnBackStackChanged
                     })
 
 
-
-
-                }else {
-                    Toast.makeText(this,"Lütfen geçerli bir telefon numarası giriniz",Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Lütfen geçerli bir telefon numarası giriniz", Toast.LENGTH_SHORT).show()
                 }
 
 
-            }
-            else {
+            } else {
 
-                if(isValidEmail(etGirisYontemi.text.toString())){
-
-                    var emailKullanimdaMi=false
-
-
-                    mRef.child("users").addListenerForSingleValueEvent(object : ValueEventListener{
+                if (isValidEmail(etGirisYontemi.text.toString())) {
+                    var emailKullanimdaMi = false
+                    mRef.child("users").addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onCancelled(p0: DatabaseError) {
-
                         }
-
                         override fun onDataChange(p0: DataSnapshot) {
+                            Log.e("****", p0.getValue().toString())
+                            if (p0.getValue() != null) {
 
-                            if(p0!!.getValue() != null){
-
-                                for(user in p0!!.children){
-
-                                    var okunanKullanici=user.getValue(Users::class.java)
-                                    if (okunanKullanici!!.email!!.equals(etGirisYontemi.text.toString())){
-                                        Toast.makeText(this@RegisterActivity,"Email Kullanımda",Toast.LENGTH_SHORT).show()
-                                        emailKullanimdaMi=true
+                                for (user in p0.children) {
+                                    var okunanKullanici = user.getValue(Users::class.java)
+                                    Log.e("***2**", okunanKullanici!!.toString())
+                                    if (okunanKullanici!!.email!!.equals(etGirisYontemi.getText().toString())) {
+                                        Toast.makeText(this@RegisterActivity, "Email Kullanımda", Toast.LENGTH_SHORT).show()
+                                        emailKullanimdaMi = true
                                         break
                                     }
-
-
                                 }
 
-                                if(emailKullanimdaMi==false){
-                                    loginRoot.visibility=View.GONE
-                                    loginContainer.visibility=View.VISIBLE
-                                    var transaction=supportFragmentManager.beginTransaction()
+                                if (emailKullanimdaMi == false) {
+                                    loginRoot.visibility = View.GONE
+                                    loginContainer.visibility = View.VISIBLE
+                                    var transaction = supportFragmentManager.beginTransaction()
                                     transaction.replace(R.id.loginContainer, KayitFragment())
                                     transaction.addToBackStack("emailileGirisFragmentEklendi")
                                     transaction.commit()
-                                    EventBus.getDefault().postSticky(EventbusDataEvents.KayitBilgileriniGonder(null,etGirisYontemi.text.toString(), null, null, true))
+                                    EventBus.getDefault().postSticky(EventbusDataEvents.KayitBilgileriniGonder(null, etGirisYontemi.text.toString(), null, null, true))
                                 }
                             }
                             //veritabanında hiç kullanıcı yok, aynen kaydet
-                            else{
+                            else {
 
-                                loginRoot.visibility=View.GONE
-                                loginContainer.visibility=View.VISIBLE
-                                var transaction=supportFragmentManager.beginTransaction()
+                                loginRoot.visibility = View.GONE
+                                loginContainer.visibility = View.VISIBLE
+                                var transaction = supportFragmentManager.beginTransaction()
                                 transaction.replace(R.id.loginContainer, KayitFragment())
                                 transaction.addToBackStack("emailileGirisFragmentEklendi")
                                 transaction.commit()
-                                EventBus.getDefault().postSticky(EventbusDataEvents.KayitBilgileriniGonder(null,etGirisYontemi.text.toString(), null, null, true))
+                                EventBus.getDefault().postSticky(EventbusDataEvents.KayitBilgileriniGonder(null, etGirisYontemi.text.toString(), null, null, true))
 
                             }
                         }
@@ -222,37 +212,33 @@ class RegisterActivity : AppCompatActivity(), FragmentManager.OnBackStackChanged
                     })
 
 
-                }
-                else {
-                    Toast.makeText(this,"Lütfen geçerli bir email  giriniz",Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Lütfen geçerli bir email  giriniz", Toast.LENGTH_SHORT).show()
                 }
             }
-
         }
-
-
     }
 
     override fun onBackStackChanged() {
         val elemanSayisi = manager.backStackEntryCount
 
-        if(elemanSayisi==0){
-            loginRoot.visibility= View.VISIBLE
+        if (elemanSayisi == 0) {
+            loginRoot.visibility = View.VISIBLE
         }
     }
 
-    fun isValidEmail(kontrolEdilecekMail:String):Boolean{
+    fun isValidEmail(kontrolEdilecekMail: String): Boolean {
 
-        if(kontrolEdilecekMail == null){
+        if (kontrolEdilecekMail == null) {
             return false
         }
         return android.util.Patterns.EMAIL_ADDRESS.matcher(kontrolEdilecekMail).matches()
 
     }
 
-    fun isValidTelefon(kontrolEdilecekTelefon:String):Boolean{
+    fun isValidTelefon(kontrolEdilecekTelefon: String): Boolean {
 
-        if(kontrolEdilecekTelefon == null || kontrolEdilecekTelefon.length > 14){
+        if (kontrolEdilecekTelefon == null || kontrolEdilecekTelefon.length > 14) {
             return false
         }
         return android.util.Patterns.PHONE.matcher(kontrolEdilecekTelefon).matches()
@@ -260,16 +246,16 @@ class RegisterActivity : AppCompatActivity(), FragmentManager.OnBackStackChanged
     }
 
     private fun setupAuthListener() {
-        mAuthListener=object : FirebaseAuth.AuthStateListener{
+        mAuthListener = object : FirebaseAuth.AuthStateListener {
             override fun onAuthStateChanged(p0: FirebaseAuth) {
-                var user= FirebaseAuth.getInstance().currentUser
+                var user = FirebaseAuth.getInstance().currentUser
 
-                if(user != null){
+                if (user != null) {
 
-                    var intent=Intent(this@RegisterActivity, HomeActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                    var intent = Intent(this@RegisterActivity, HomeActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
                     startActivity(intent)
                     finish()
-                }else {
+                } else {
 
 
                 }
@@ -285,7 +271,7 @@ class RegisterActivity : AppCompatActivity(), FragmentManager.OnBackStackChanged
 
     override fun onStop() {
         super.onStop()
-        if(mAuthListener != null){
+        if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener)
         }
     }

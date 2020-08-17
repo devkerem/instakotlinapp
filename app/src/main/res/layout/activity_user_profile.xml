@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.keremk.instakotlinapp.Profile.ProfileActivity">
+    tools:context="com.keremk.instakotlinapp.Generic.UserProfileActivity">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -43,7 +43,7 @@
                     android:textColor="@color/siyah"
                     android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="@+id/imgProfileSettings"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView2"
                     app:layout_constraintTop_toTopOf="@+id/imgProfileSettings" />
 
                 <ImageView
@@ -56,26 +56,15 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_profile_options" />
 
-                <ImageView
-                    android:id="@+id/imageView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/imgProfileSettings"
-                    app:layout_constraintEnd_toStartOf="@+id/imgProfileSettings"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_discover_people" />
-
                 <View
                     android:id="@+id/golgelik"
                     android:layout_width="0dp"
                     android:layout_height="2dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="7dp"
                     android:background="@color/golgelik"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView2"/>
+                    app:layout_constraintTop_toBottomOf="@+id/imageView2"></View>
 
                 <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/circleProfileImage"
@@ -195,20 +184,20 @@
                     android:background="@color/golgelik"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imgList"/>
+                    app:layout_constraintTop_toBottomOf="@+id/imgList"></View>
 
                 <TextView
                     android:id="@+id/tvProfilDuzenleButon"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
-                    android:background="@drawable/edit_profile_button_background"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/register_button_aktif"
                     android:padding="6dp"
-                    android:text="Profili Düzenle"
+                    android:text="Takip Et"
                     android:textAlignment="center"
-                    android:textColor="@color/siyah"
+                    android:textColor="@color/beyaz"
                     app:layout_constraintBottom_toBottomOf="@+id/circleProfileImage"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/circleProfileImage" />
@@ -227,13 +216,12 @@
 
                 <TextView
                     android:id="@+id/tvBiyografi"
-                    android:layout_width="wrap_content"
+                    android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="4dp"
-                    android:maxWidth="250dp"
                     android:text="Ekinler baş vermeden kör buzağı topallamaz !!!!!!"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tvProfilGercekAdi" />
 
@@ -243,9 +231,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
+                    android:layout_marginTop="4dp"
                     android:text="TextView"
-                    android:visibility="visible"
-                    app:layout_constraintEnd_toEndOf="@+id/tvProfilGercekAdi"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/tvBiyografi"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tvBiyografi" />
 
@@ -314,6 +303,16 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/golgelik3" />
 
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/golgelik"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_back" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
 
@@ -333,7 +332,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:menu="@menu/bottom_navigation_menu"></com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx>
+                app:menu="@menu/bottom_navigation_menu"/>
 
             <View
                 android:id="@+id/view"
@@ -349,7 +348,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
     <FrameLayout
         android:id="@+id/profileContainer"
         android:layout_width="match_parent"
@@ -362,4 +360,3 @@
 
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
-

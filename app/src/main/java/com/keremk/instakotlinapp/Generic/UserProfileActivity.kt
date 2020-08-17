@@ -1,11 +1,11 @@
-package com.keremk.instakotlinapp.Profile
+package com.keremk.instakotlinapp.Generic
 
 import android.content.Intent
 import android.graphics.PorterDuff
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,13 +15,14 @@ import com.google.firebase.database.*
 import com.keremk.instakotlinapp.Login.LoginActivity
 import com.keremk.instakotlinapp.Models.UserPosts
 import com.keremk.instakotlinapp.Models.Users
+import com.keremk.instakotlinapp.Profile.ProfileEditFragment
+import com.keremk.instakotlinapp.Profile.ProfileSettingsActivity
 import com.keremk.instakotlinapp.R
 import com.keremk.instakotlinapp.utils.*
-import kotlinx.android.synthetic.main.activity_profile.*
+import kotlinx.android.synthetic.main.activity_user_profile.*
 import org.greenrobot.eventbus.EventBus
 
-
-class ProfileActivity : AppCompatActivity() {
+class UserProfileActivity : AppCompatActivity() {
 
     private val ACTIVITY_NO = 4
     private val TAG = "ProfileActivity"
@@ -31,21 +32,20 @@ class ProfileActivity : AppCompatActivity() {
     lateinit var mUser: FirebaseUser
     lateinit var mRef: DatabaseReference
     lateinit var tumGonderiler: ArrayList<UserPosts>
-
+    lateinit var secilenUserID: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_profile)
-
+        setContentView(R.layout.activity_user_profile)
         setupAuthListener()
         mAuth = FirebaseAuth.getInstance()
         mUser = mAuth.currentUser!!
         mRef = FirebaseDatabase.getInstance().reference
         tumGonderiler = ArrayList<UserPosts>()
-
+        secilenUserID = intent.getStringExtra("secilenUserID")!!
         setupToolbar()
         kullaniciBilgileriniGetir()
 
-        kullaniciPostlariniGetir(mUser.uid)
+        kullaniciPostlariniGetir(secilenUserID)
         imgGrid.setOnClickListener {
             setupRecyclerView(1)
         }
@@ -60,7 +60,7 @@ class ProfileActivity : AppCompatActivity() {
         tvProfilDuzenleButon.isEnabled = false
         imgProfileSettings.isEnabled = false
 
-        mRef.child("users").child(mUser!!.uid).addValueEventListener(object : ValueEventListener {
+        mRef.child("users").child(secilenUserID).addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
 
             }
@@ -74,12 +74,12 @@ class ProfileActivity : AppCompatActivity() {
                     tvProfilDuzenleButon.isEnabled = true
                     imgProfileSettings.isEnabled = true
                     tvProfilAdiToolbar.setText(okunanKullaniciBilgileri!!.user_name)
-                    tvProfilGercekAdi.setText(okunanKullaniciBilgileri.adi_soyadi)
-                    tvFollowerSayisi.setText(okunanKullaniciBilgileri.user_detail!!.follower)
-                    tvFollowingSayisi.setText(okunanKullaniciBilgileri.user_detail!!.following)
-                    tvPostSayisi.setText(okunanKullaniciBilgileri.user_detail!!.post)
+                    tvProfilGercekAdi.setText(okunanKullaniciBilgileri!!.adi_soyadi)
+                    tvFollowerSayisi.setText(okunanKullaniciBilgileri!!.user_detail!!.follower)
+                    tvFollowingSayisi.setText(okunanKullaniciBilgileri!!.user_detail!!.following)
+                    tvPostSayisi.setText(okunanKullaniciBilgileri!!.user_detail!!.post)
 
-                    var imgUrl: String = okunanKullaniciBilgileri.user_detail!!.profile_picture!!
+                    var imgUrl: String = okunanKullaniciBilgileri!!.user_detail!!.profile_picture!!
                     UniversalImageLoader.setImage(imgUrl, circleProfileImage, progressBar, "")
 
                     if (!okunanKullaniciBilgileri!!.user_detail!!.biography!!.isNullOrEmpty()) {
@@ -167,15 +167,15 @@ class ProfileActivity : AppCompatActivity() {
     private fun setupRecyclerView(layoutCesidi: Int) {
 
         if (layoutCesidi == 1) {
-            imgGrid.setColorFilter(ContextCompat.getColor(this,R.color.mavi),PorterDuff.Mode.SRC_IN)
-            imgList.setColorFilter(ContextCompat.getColor(this,R.color.siyah)  ,PorterDuff.Mode.SRC_IN)
+            imgGrid.setColorFilter(ContextCompat.getColor(this,R.color.mavi), PorterDuff.Mode.SRC_IN)
+            imgList.setColorFilter(ContextCompat.getColor(this,R.color.siyah)  , PorterDuff.Mode.SRC_IN)
 
             var kullaniciPostListe = profileRecyclerView
             kullaniciPostListe.adapter = ProfilePostGridRecyclerAdapter(tumGonderiler, this)
             kullaniciPostListe.layoutManager = GridLayoutManager(this, 3)
         } else if (layoutCesidi == 2) {
-            imgGrid.setColorFilter(ContextCompat.getColor(this,R.color.siyah),PorterDuff.Mode.SRC_IN)
-            imgList.setColorFilter(ContextCompat.getColor(this,R.color.mavi)  ,PorterDuff.Mode.SRC_IN)
+            imgGrid.setColorFilter(ContextCompat.getColor(this,R.color.siyah), PorterDuff.Mode.SRC_IN)
+            imgList.setColorFilter(ContextCompat.getColor(this,R.color.mavi)  , PorterDuff.Mode.SRC_IN)
             var kullaniciPostListe = profileRecyclerView
             kullaniciPostListe.adapter = ProfilePostListRecyclerAdapter(this, tumGonderiler)
 
@@ -186,7 +186,6 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        tumlayout.visibility = View.VISIBLE
         super.onBackPressed()
     }
 
@@ -195,7 +194,7 @@ class ProfileActivity : AppCompatActivity() {
             var user = FirebaseAuth.getInstance().currentUser
             if (user == null) {
                 Log.e("HATA", "Kullanıcı oturum açmamış, ProfileActivitydesin")
-                var intent = Intent(this@ProfileActivity, LoginActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                var intent = Intent(applicationContext, LoginActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 startActivity(intent)
                 finish()
@@ -216,5 +215,5 @@ class ProfileActivity : AppCompatActivity() {
             mAuth.removeAuthStateListener(mAuthListener)
         }
     }
-}
 
+}

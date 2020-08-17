@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imgUserProfile"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/tvKullaniciAdiBaslik"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="TextView"
+        android:textColor="@color/siyah"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/imgUserProfile"
+        app:layout_constraintStart_toEndOf="@+id/imgUserProfile"
+        app:layout_constraintTop_toTopOf="@+id/imgUserProfile" />
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imgUserProfile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imgUserProfile"
+        app:srcCompat="@drawable/ic_profile_options" />
+    <ImageView
+        android:id="@+id/imgBegen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@null"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout"
+        app:srcCompat="@drawable/ic_like" />
+    <ImageView
+        android:id="@+id/imgYorum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:adjustViewBounds="false"
+        android:cropToPadding="false"
+        app:layout_constraintStart_toEndOf="@+id/imgBegen"
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout"
+        app:srcCompat="@drawable/ic_comment" />
+    <ImageView
+        android:id="@+id/imgGonder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:adjustViewBounds="true"
+        android:cropToPadding="true"
+        app:layout_constraintStart_toEndOf="@+id/imgYorum"
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout"
+        app:srcCompat="@drawable/ic_gonder" />
+
+    <TextView
+        android:id="@+id/tvKullaniciAdiveAciklama"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:text="ealtunbilek"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgBegen" />
+
+    <TextView
+        android:id="@+id/tvKacZamanOnce"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
+        android:text="3 GÜN ÖNCE"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/tvKullaniciAdiveAciklama" />
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgUserProfile">
+        <ImageView
+            android:id="@+id/imgPostResim"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxHeight="350dp"
+            android:layout_gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="166dp" />
+        <com.github.kshitij_jain.instalike.InstaLikeView
+            android:id="@+id/insta_like_view"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_gravity="center"
+            app:likeColor="@color/kirmizi"
+            app:likeSize="128dp"
+            app:likeSrc="@drawable/ic_begen_kirmizi" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvBegenmeSayisi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginBottom="4dp"
+        android:text="TextView"
+        android:textColor="@color/siyah"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/tvKacZamanOnce"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvKullaniciAdiveAciklama" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

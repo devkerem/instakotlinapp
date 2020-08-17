@@ -6,22 +6,41 @@
     android:layout_height="match_parent"
     tools:context=".Share.ShareActivity">
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/shareViewPager"
+    <FrameLayout
+        android:id="@+id/fragmentContainerLayout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="50dp"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/sharetablayout"
+    </FrameLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/shareViewPager"/>
+        android:layout_height="match_parent"
+        android:id="@+id/anaLayout"
+        >
+
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/shareViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/sharetablayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/shareViewPager" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

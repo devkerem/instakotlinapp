@@ -3,6 +3,7 @@ package com.keremk.instakotlinapp.Home
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.keremk.instakotlinapp.Login.LoginActivity
@@ -25,10 +26,12 @@ class HomeActivity : AppCompatActivity() {
         setupAuthListener()
         mAuth = FirebaseAuth.getInstance()
         initImageLoader()
-        setupNavigationView()
         setupHomeViewPager()
     }
 
+    override fun onResume() {
+        super.onResume()
+    }
     fun setupHomeViewPager() {
         var homePagerAdapter = HomePagerAdapter(supportFragmentManager)
         homePagerAdapter.addFragment(CameraFragment())
@@ -37,15 +40,6 @@ class HomeActivity : AppCompatActivity() {
         homeViewPager.adapter = homePagerAdapter
         homeViewPager.currentItem = 1
     }
-
-    fun setupNavigationView() {
-        BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx)
-        BottomNavigationViewHelper.setupNavigation(this, bottomNavigationViewEx)
-        var menu = bottomNavigationViewEx.menu
-        var menuItem = menu.getItem(ACTIVITY_NO)
-        menuItem.setChecked(true)
-    }
-
     private fun initImageLoader() {
         var universalImageLoader = UniversalImageLoader(this)
         ImageLoader.getInstance().init(universalImageLoader.config)
@@ -70,6 +64,15 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        if (homeViewPager.currentItem==1){
+            super.onBackPressed()
+            homeViewPager.visibility = View.VISIBLE
+            homeFragmentContainer.visibility = View.GONE
+        }else{
+            homeViewPager.currentItem = 1
+        }
+    }
     override fun onStart() {
         super.onStart()
         Log.e("HATA","HomeActivitydesin")
