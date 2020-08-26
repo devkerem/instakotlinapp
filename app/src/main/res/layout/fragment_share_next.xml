@@ -2,9 +2,10 @@
 
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">    <androidx.appcompat.widget.Toolbar
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="56dp"
@@ -89,7 +90,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
+        <com.hendraanggrian.widget.SocialEditText
             android:id="@+id/etpostAciklama"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -97,12 +98,12 @@
             android:layout_marginEnd="8dp"
             android:ems="10"
             android:hint="Bir Açıklama Yazın"
-
-                 android:inputType="textMultiLine"
+            android:inputType="textMultiLine"
             app:layout_constraintBottom_toBottomOf="@+id/imgSecilenResim"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imgSecilenResim"
             app:layout_constraintTop_toTopOf="@+id/imgSecilenResim" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View

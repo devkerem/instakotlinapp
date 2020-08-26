@@ -12,10 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import com.hoanganhtuan95ptit.autoplayvideorecyclerview.AutoPlayVideoRecyclerView
 import com.keremk.instakotlinapp.Login.LoginActivity
 import com.keremk.instakotlinapp.Models.UserPosts
 import com.keremk.instakotlinapp.Models.Users
 import com.keremk.instakotlinapp.R
+import com.keremk.instakotlinapp.VideoRecyclerView.view.CenterLayoutManager
 import com.keremk.instakotlinapp.utils.*
 import kotlinx.android.synthetic.main.activity_profile.*
 import org.greenrobot.eventbus.EventBus
@@ -25,12 +27,12 @@ class ProfileActivity : AppCompatActivity() {
 
     private val ACTIVITY_NO = 4
     private val TAG = "ProfileActivity"
-
     lateinit var mAuth: FirebaseAuth
     lateinit var mAuthListener: FirebaseAuth.AuthStateListener
     lateinit var mUser: FirebaseUser
     lateinit var mRef: DatabaseReference
     lateinit var tumGonderiler: ArrayList<UserPosts>
+    var mRecyclerView: AutoPlayVideoRecyclerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,10 +118,18 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
+
     override fun onResume() {
         setupNavigationView()
+        if (mRecyclerView?.handingVideoHolder != null) mRecyclerView!!.handingVideoHolder.playVideo()
         super.onResume()
     }
+
+    override fun onPause() {
+        if (mRecyclerView?.handingVideoHolder != null) mRecyclerView!!.handingVideoHolder.stopVideo()
+        super.onPause()
+    }
+
 
     fun setupNavigationView() {
 
@@ -156,7 +166,7 @@ class ProfileActivity : AppCompatActivity() {
                                 tumGonderiler.add(eklenecekUserPosts)
                             }
                         }
-                        setupRecyclerView(1)
+                        setupRecyclerView(2)
                     }
                 })
             }
@@ -167,19 +177,27 @@ class ProfileActivity : AppCompatActivity() {
     private fun setupRecyclerView(layoutCesidi: Int) {
 
         if (layoutCesidi == 1) {
-            imgGrid.setColorFilter(ContextCompat.getColor(this,R.color.mavi),PorterDuff.Mode.SRC_IN)
-            imgList.setColorFilter(ContextCompat.getColor(this,R.color.siyah)  ,PorterDuff.Mode.SRC_IN)
+            if (mRecyclerView?.handingVideoHolder != null) {
+                mRecyclerView!!.handingVideoHolder.stopVideo()
+            }
 
-            var kullaniciPostListe = profileRecyclerView
-            kullaniciPostListe.adapter = ProfilePostGridRecyclerAdapter(tumGonderiler, this)
-            kullaniciPostListe.layoutManager = GridLayoutManager(this, 3)
+            imgGrid.setColorFilter(ContextCompat.getColor(this, R.color.mavi), PorterDuff.Mode.SRC_IN)
+            imgList.setColorFilter(ContextCompat.getColor(this, R.color.siyah), PorterDuff.Mode.SRC_IN)
+
+            mRecyclerView = profileRecyclerView
+            mRecyclerView!!.setHasFixedSize(true)
+            mRecyclerView!!.adapter = ProfilePostGridRecyclerAdapter(tumGonderiler, this)
+            mRecyclerView!!.layoutManager = GridLayoutManager(this, 3)
         } else if (layoutCesidi == 2) {
-            imgGrid.setColorFilter(ContextCompat.getColor(this,R.color.siyah),PorterDuff.Mode.SRC_IN)
-            imgList.setColorFilter(ContextCompat.getColor(this,R.color.mavi)  ,PorterDuff.Mode.SRC_IN)
-            var kullaniciPostListe = profileRecyclerView
-            kullaniciPostListe.adapter = ProfilePostListRecyclerAdapter(this, tumGonderiler)
+            if (mRecyclerView?.handingVideoHolder != null) {
+                mRecyclerView!!.handingVideoHolder.playVideo()
+            }
 
-            kullaniciPostListe.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+            imgGrid.setColorFilter(ContextCompat.getColor(this, R.color.siyah), PorterDuff.Mode.SRC_IN)
+            imgList.setColorFilter(ContextCompat.getColor(this, R.color.mavi), PorterDuff.Mode.SRC_IN)
+            mRecyclerView = profileRecyclerView
+            mRecyclerView!!.layoutManager = CenterLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+            mRecyclerView!!.adapter = ProfilePostListRecyclerAdapter(this, tumGonderiler)
 
         }
 

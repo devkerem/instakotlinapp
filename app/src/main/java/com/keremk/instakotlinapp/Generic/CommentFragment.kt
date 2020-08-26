@@ -1,6 +1,7 @@
 package com.keremk.instakotlinapp.Generic
 
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
@@ -18,8 +19,11 @@ import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import com.hendraanggrian.widget.Mention
+import com.hendraanggrian.widget.MentionAdapter
 import com.keremk.instakotlinapp.Models.Comments
 import com.keremk.instakotlinapp.Models.Users
+import com.keremk.instakotlinapp.Profile.ProfileActivity
 import com.keremk.instakotlinapp.R
 import com.keremk.instakotlinapp.utils.EventbusDataEvents
 import com.keremk.instakotlinapp.utils.TimeAgo
@@ -60,13 +64,36 @@ class CommentFragment : Fragment() {
             FirebaseDatabase.getInstance().getReference().child("comments").child(yorumYapilacakGonderininID!!).push().setValue(yeniYorum)
 
             etYorum.setText("")
-
+            fragmentView.yorumlarRecyclerView.smoothScrollToPosition(fragmentView.yorumlarRecyclerView.adapter!!.itemCount)
 
         }
         fragmentView.imgClose.setOnClickListener {
             activity!!.onBackPressed()
         }
+        var mentionAdapter = MentionAdapter(activity!!)
+        fragmentView.etYorum.setMentionTextChangedListener { view: View, s: String ->
+            FirebaseDatabase.getInstance().reference.child("users").orderByChild("user_name").startAt(s).endAt(s + "\uf8ff")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onCancelled(error: DatabaseError) {
+                    }
 
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.hasChildren()) {
+                            for (user in snapshot.children) {
+                                mentionAdapter.clear()
+                                var okunanUser = user.getValue(Users::class.java)
+                                var userName = okunanUser!!.user_name.toString()
+                                var adiSoyadi = okunanUser!!.adi_soyadi.toString()
+                                var photo = okunanUser!!.user_detail!!.profile_picture
+                                var profilePicture = if (!photo.isNullOrEmpty()) photo else "https://miro.medium.com/max/256/0*vuQRIjTuwmZ7r6em.jpg"
+
+                                mentionAdapter.add(Mention(userName, adiSoyadi, profilePicture))
+                            }
+                        }
+                    }
+                })
+        }
+        fragmentView.etYorum.mentionAdapter = mentionAdapter
 
         return fragmentView
     }
@@ -153,6 +180,34 @@ class CommentFragment : Fragment() {
                         sonuc = Html.fromHtml(userNameveYorum)
                     }
                     kullaniciAdiveYorum.setText(sonuc)
+
+                    kullaniciAdiveYorum.setOnMentionClickListener { view, s ->
+                        var tiklanilanUserName = s
+                        var mRef = FirebaseDatabase.getInstance().reference
+                        mRef.child("users").orderByChild("user_name").equalTo(s).addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onCancelled(error: DatabaseError) {}
+
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                if (snapshot.getValue() != null) {
+                                    for (ds in snapshot.children) {
+                                        var bulunanUserID = ds.getValue(Users::class.java)!!.user_id
+//                                        var bulunanUserID = snapshot.value.toString()
+                                        Log.e("HATA", "KULLANICI BULUNDU")
+                                        if (!bulunanUserID!!.equals(FirebaseAuth.getInstance().currentUser!!.uid)) {
+                                            var intent = Intent(kullaniciAdiveYorum.context, UserProfileActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                                            intent.putExtra("secilenUserID", bulunanUserID)
+                                            kullaniciAdiveYorum.context.startActivity(intent)
+                                        } else {
+                                            var intent = Intent(kullaniciAdiveYorum.context, ProfileActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                                            kullaniciAdiveYorum.context.startActivity(intent)
+                                        }
+                                    }
+                                }
+
+                            }
+                        })
+                    }
+
                     UniversalImageLoader.setImage(p0!!.getValue(Users::class.java)!!.user_detail!!.profile_picture!!.toString(), yorumYapanUserPhoto
                         , null, "")
                 }
@@ -192,10 +247,10 @@ class CommentFragment : Fragment() {
             mRef.child("begenenler").addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {}
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()){
+                    if (snapshot.exists()) {
                         yorumBegenmeSayisi.visibility = View.VISIBLE
-                        yorumBegenmeSayisi.text = snapshot!!.childrenCount.toString()+" beğenme"
-                    }else{
+                        yorumBegenmeSayisi.text = snapshot!!.childrenCount.toString() + " beğenme"
+                    } else {
                         yorumBegenmeSayisi.visibility = View.INVISIBLE
 
                     }

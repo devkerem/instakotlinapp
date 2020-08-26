@@ -2,10 +2,11 @@ package com.keremk.instakotlinapp.Generic
 
 import android.content.Intent
 import android.graphics.PorterDuff
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,8 +16,6 @@ import com.google.firebase.database.*
 import com.keremk.instakotlinapp.Login.LoginActivity
 import com.keremk.instakotlinapp.Models.UserPosts
 import com.keremk.instakotlinapp.Models.Users
-import com.keremk.instakotlinapp.Profile.ProfileEditFragment
-import com.keremk.instakotlinapp.Profile.ProfileSettingsActivity
 import com.keremk.instakotlinapp.R
 import com.keremk.instakotlinapp.utils.*
 import kotlinx.android.synthetic.main.activity_user_profile.*
@@ -24,8 +23,8 @@ import org.greenrobot.eventbus.EventBus
 
 class UserProfileActivity : AppCompatActivity() {
 
-    private val ACTIVITY_NO = 4
-    private val TAG = "ProfileActivity"
+    private val ACTIVITY_NO = 1
+    private val TAG = "SearchActivity"
 
     lateinit var mAuth: FirebaseAuth
     lateinit var mAuthListener: FirebaseAuth.AuthStateListener
@@ -42,7 +41,7 @@ class UserProfileActivity : AppCompatActivity() {
         mRef = FirebaseDatabase.getInstance().reference
         tumGonderiler = ArrayList<UserPosts>()
         secilenUserID = intent.getStringExtra("secilenUserID")!!
-        setupToolbar()
+        setupButtons()
         kullaniciBilgileriniGetir()
 
         kullaniciPostlariniGetir(secilenUserID)
@@ -57,7 +56,7 @@ class UserProfileActivity : AppCompatActivity() {
 
     private fun kullaniciBilgileriniGetir() {
 
-        tvProfilDuzenleButon.isEnabled = false
+        tvTakip.isEnabled = false
         imgProfileSettings.isEnabled = false
 
         mRef.child("users").child(secilenUserID).addValueEventListener(object : ValueEventListener {
@@ -71,7 +70,7 @@ class UserProfileActivity : AppCompatActivity() {
                     var okunanKullaniciBilgileri = p0.getValue(Users::class.java)
 
                     EventBus.getDefault().postSticky(EventbusDataEvents.KullaniciBilgileriniGonder(okunanKullaniciBilgileri))
-                    tvProfilDuzenleButon.isEnabled = true
+                    tvTakip.isEnabled = true
                     imgProfileSettings.isEnabled = true
                     tvProfilAdiToolbar.setText(okunanKullaniciBilgileri!!.user_name)
                     tvProfilGercekAdi.setText(okunanKullaniciBilgileri!!.adi_soyadi)
@@ -89,31 +88,95 @@ class UserProfileActivity : AppCompatActivity() {
                     if (!okunanKullaniciBilgileri!!.user_detail!!.web_site!!.isNullOrEmpty()) {
                         tvWebSitesi.visibility = View.VISIBLE
                         tvWebSitesi.setText(okunanKullaniciBilgileri!!.user_detail!!.web_site!!)
+                    } else {
+                        tvWebSitesi.visibility = View.GONE
                     }
+
                 }
+                takipBilgisiniGetir()
             }
         })
 
     }
 
+    private fun takipBilgisiniGetir() {
+        mRef.child("following").child(mUser.uid).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {}
 
-    private fun setupToolbar() {
+            override fun onDataChange(p0: DataSnapshot) {
+                if (p0.hasChildren()) {
+                    takibiBirakButonOzellikleri()
+                } else {
+                    takipEtButonOzellikleri()
+
+                }
+            }
+        })
+    }
+
+    fun takipEtButonOzellikleri() {
+        tvTakip.setText("Takip Et")
+
+        tvTakip.setTextColor(ContextCompat.getColor(applicationContext, R.color.beyaz))
+        tvTakip.setBackgroundResource(R.drawable.register_button_aktif)
+    }
+
+    fun takibiBirakButonOzellikleri() {
+        tvTakip.setText("Takip Bırak")
+        tvTakip.setTextColor(ContextCompat.getColor(applicationContext, R.color.siyah))
+        tvTakip.setBackgroundResource(R.drawable.takip_et_beyaz)
+    }
+
+
+    private fun setupButtons() {
+        imgBack.setOnClickListener {
+            onBackPressed()
+        }
         imgProfileSettings.setOnClickListener {
-            var intent = Intent(this, ProfileSettingsActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-            startActivity(intent)
+            Toast.makeText(applicationContext, "img Porfile Setting ", Toast.LENGTH_LONG).show()
         }
 
-        tvProfilDuzenleButon.setOnClickListener {
-
-            tumlayout.visibility = View.GONE
-            profileContainer.visibility = View.VISIBLE
-            var transaction = supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.profileContainer, ProfileEditFragment())
-            transaction.addToBackStack("editProfileFragmentEklendi")
-            transaction.commit()
-
+        tvTakip.setOnClickListener {
+            Toast.makeText(applicationContext, "img Porfile Edit .", Toast.LENGTH_LONG).show()
+            mRef.child("following").child(mUser.uid).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {}
+                override fun onDataChange(p0: DataSnapshot) {
+                    if (p0.hasChild(secilenUserID)) {
+                        mRef.child("following").child(mUser.uid).child(secilenUserID).removeValue()
+                        mRef.child("follower").child(secilenUserID).child(mUser.uid).removeValue()
+                        takipEtButonOzellikleri()
+                        takipciSayilariniGuncelle()
+                    } else {
+                        mRef.child("following").child(mUser.uid).child(secilenUserID).setValue(secilenUserID)
+                        mRef.child("follower").child(secilenUserID).child(mUser.uid).setValue(mUser.uid)
+                        takibiBirakButonOzellikleri()
+                        takipciSayilariniGuncelle()
+                    }
+                }
+            })
         }
 
+    }
+
+    private fun takipciSayilariniGuncelle() {
+        mRef = FirebaseDatabase.getInstance().reference
+        mRef.child("following").child(mUser.uid).addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {}
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var takipEttikleriminSayisi = snapshot.childrenCount.toString()
+                mRef.child("follower").child(secilenUserID).addValueEventListener(object : ValueEventListener {
+                    override fun onCancelled(error: DatabaseError) {
+                    }
+
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        var takipEdenlerinSayisi = snapshot.childrenCount.toString()
+                        mRef.child("users").child(mUser.uid).child("user_detail").child("following").setValue(takipEttikleriminSayisi)
+                        mRef.child("users").child(secilenUserID).child("user_detail").child("follower").setValue(takipEdenlerinSayisi)
+                    }
+                })
+            }
+        })
     }
 
     override fun onResume() {
@@ -167,15 +230,15 @@ class UserProfileActivity : AppCompatActivity() {
     private fun setupRecyclerView(layoutCesidi: Int) {
 
         if (layoutCesidi == 1) {
-            imgGrid.setColorFilter(ContextCompat.getColor(this,R.color.mavi), PorterDuff.Mode.SRC_IN)
-            imgList.setColorFilter(ContextCompat.getColor(this,R.color.siyah)  , PorterDuff.Mode.SRC_IN)
+            imgGrid.setColorFilter(ContextCompat.getColor(this, R.color.mavi), PorterDuff.Mode.SRC_IN)
+            imgList.setColorFilter(ContextCompat.getColor(this, R.color.siyah), PorterDuff.Mode.SRC_IN)
 
             var kullaniciPostListe = profileRecyclerView
             kullaniciPostListe.adapter = ProfilePostGridRecyclerAdapter(tumGonderiler, this)
             kullaniciPostListe.layoutManager = GridLayoutManager(this, 3)
         } else if (layoutCesidi == 2) {
-            imgGrid.setColorFilter(ContextCompat.getColor(this,R.color.siyah), PorterDuff.Mode.SRC_IN)
-            imgList.setColorFilter(ContextCompat.getColor(this,R.color.mavi)  , PorterDuff.Mode.SRC_IN)
+            imgGrid.setColorFilter(ContextCompat.getColor(this, R.color.siyah), PorterDuff.Mode.SRC_IN)
+            imgList.setColorFilter(ContextCompat.getColor(this, R.color.mavi), PorterDuff.Mode.SRC_IN)
             var kullaniciPostListe = profileRecyclerView
             kullaniciPostListe.adapter = ProfilePostListRecyclerAdapter(this, tumGonderiler)
 
@@ -215,5 +278,4 @@ class UserProfileActivity : AppCompatActivity() {
             mAuth.removeAuthStateListener(mAuthListener)
         }
     }
-
 }

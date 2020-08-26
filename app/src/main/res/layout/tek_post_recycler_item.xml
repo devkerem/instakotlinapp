@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
+
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imgUserProfile"
         android:layout_width="30dp"
@@ -13,6 +14,7 @@
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tvKullaniciAdiBaslik"
         android:layout_width="wrap_content"
@@ -25,6 +27,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/imgUserProfile"
         app:layout_constraintStart_toEndOf="@+id/imgUserProfile"
         app:layout_constraintTop_toTopOf="@+id/imgUserProfile" />
+
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="wrap_content"
@@ -34,6 +37,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/imgUserProfile"
         app:srcCompat="@drawable/ic_profile_options" />
+
     <ImageView
         android:id="@+id/imgBegen"
         android:layout_width="wrap_content"
@@ -44,6 +48,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/frameLayout"
         app:srcCompat="@drawable/ic_like" />
+
     <ImageView
         android:id="@+id/imgYorum"
         android:layout_width="wrap_content"
@@ -54,6 +59,7 @@
         app:layout_constraintStart_toEndOf="@+id/imgBegen"
         app:layout_constraintTop_toBottomOf="@+id/frameLayout"
         app:srcCompat="@drawable/ic_comment" />
+
     <ImageView
         android:id="@+id/imgGonder"
         android:layout_width="wrap_content"
@@ -73,7 +79,7 @@
         android:layout_marginTop="8dp"
         android:text="ealtunbilek"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgBegen" />
+        app:layout_constraintTop_toBottomOf="@+id/tvBegenmeSayisi" />
 
     <TextView
         android:id="@+id/tvKacZamanOnce"
@@ -81,31 +87,53 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="4dp"
         android:text="3 GÜN ÖNCE"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/tvKullaniciAdiveAciklama" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <FrameLayout
         android:id="@+id/frameLayout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgUserProfile">
+
+
+        <com.keremk.instakotlinapp.VideoRecyclerView.view.VideoView
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:id="@+id/videoView">
+
+            <View
+                android:id="@+id/videoKaranlik"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="@color/siyah"
+                android:visibility="gone" />
+            <com.keremk.instakotlinapp.VideoRecyclerView.view.CameraAnimation
+                android:id="@+id/cameraAnimation"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                app:srcCompat="@drawable/fram_camera" />
+        </com.keremk.instakotlinapp.VideoRecyclerView.view.VideoView>
+
+
         <ImageView
             android:id="@+id/imgPostResim"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
             android:maxHeight="350dp"
-            android:layout_gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             tools:layout_editor_absoluteY="166dp" />
+
         <com.github.kshitij_jain.instalike.InstaLikeView
             android:id="@+id/insta_like_view"
             android:layout_width="128dp"
@@ -120,11 +148,23 @@
         android:id="@+id/tvBegenmeSayisi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
         android:text="TextView"
         android:textColor="@color/siyah"
         android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgBegen" />
+
+    <TextView
+        android:id="@+id/tvYorumlariGoster"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:text="12 yorumun tümünü gör"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/tvKacZamanOnce"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvKullaniciAdiveAciklama" />

@@ -1,2 +1,4 @@
+include ':autoplayvideorecyclerview'
 include ':app'
+//include ':autoplayvideorecyclerview'
 rootProject.name = "InstaKotlinApp"

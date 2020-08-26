@@ -13,16 +13,17 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ServerValue
+import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import com.keremk.instakotlinapp.Home.HomeActivity
 import com.keremk.instakotlinapp.Profile.YukleniyorFragment
 import com.keremk.instakotlinapp.R
-import com.keremk.instakotlinapp.utils.*
+import com.keremk.instakotlinapp.utils.DosyaIslemleri
+import com.keremk.instakotlinapp.utils.EventbusDataEvents
+import com.keremk.instakotlinapp.utils.Posts
+import com.keremk.instakotlinapp.utils.UniversalImageLoader
 import kotlinx.android.synthetic.main.fragment_share_next.*
 import kotlinx.android.synthetic.main.fragment_share_next.view.*
 import kotlinx.android.synthetic.main.fragment_yukleniyor.*
@@ -79,14 +80,30 @@ class ShareNextFragment : Fragment() {
             mRef.child("comments").child(postId).child(postId).child("yorum").setValue(etpostAciklama.text.toString())
             mRef.child("comments").child(postId).child(postId).child("yorum_begeni").setValue("0")
         }
+        postSayisiniGuncelle()
         var intent = Intent(context, HomeActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
         startActivity(intent)
 
     }
 
+    private fun postSayisiniGuncelle() {
+        mRef.child("users").child(mUser.uid).child("user_detail")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {}
+                override fun onDataChange(p0: DataSnapshot) {
+                    var oankiGonderiSayisi = p0.child("post").getValue().toString().toInt()
+                    oankiGonderiSayisi++
+                    mRef.child("users").child(mUser.uid).child("user_detail").child("post")
+                        .setValue(oankiGonderiSayisi.toString())
+
+                }
+            })
+    }
+
 
     //////////////////////////// EVENTBUS /////////////////////////////////
-    @Subscribe(sticky = true) internal fun onSecilenDosyaEvent(secilenDosya: EventbusDataEvents.PaylasilacakResmiGonder) {
+    @Subscribe(sticky = true)
+    internal fun onSecilenDosyaEvent(secilenDosya: EventbusDataEvents.PaylasilacakResmiGonder) {
         secilenDosyaYolu = secilenDosya.dosyaYolu!!
         dosyaTuruResimMi = secilenDosya.dosyaTuruResimMi
     }
@@ -123,6 +140,7 @@ class ShareNextFragment : Fragment() {
             }
         }.addOnFailureListener { p0: Exception ->
             dialogYukleniyor.dismiss()
+            Log.e("******",p0.message!!)
             Toast.makeText(context, p0.message, Toast.LENGTH_LONG).show()
 
         }.addOnProgressListener { p0: UploadTask.TaskSnapshot ->

@@ -7,14 +7,11 @@ import android.os.AsyncTask
 import android.provider.MediaStore
 import android.provider.MediaStore.MediaColumns
 import android.util.Log
-import android.view.View
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.iceteck.silicompressorr.SiliCompressor
 import com.keremk.instakotlinapp.Profile.YukleniyorFragment
 import com.keremk.instakotlinapp.R
 import com.keremk.instakotlinapp.Share.ShareNextFragment
-import kotlinx.android.synthetic.main.fragment_yukleniyor.*
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
@@ -90,25 +87,34 @@ class DosyaIslemleri() {
         var myFragment = fragment
         var compressFragment = YukleniyorFragment()
         override fun onPreExecute() {
-            compressFragment.show(myFragment.activity!!.supportFragmentManager, "compressDialogBasladi")
-            compressFragment.isCancelable = false
+            compressFragment.show(myFragment.activity!!.supportFragmentManager,"compressDialogBasladi")
+            compressFragment.isCancelable=false
+            super.onPreExecute()
         }
 
+
+
         override fun doInBackground(vararg params: String?): String? {
-            var appname = myFragment.activity!!.getString(R.string.app_name_without_space)
-            var yeniOlusanDosyaninKlasoru = File("/storage/emulated/0/DCIM/" + appname + "/TestKlasor/compressed/")
+            var compressedVideoPath: String? = null
+            Log.e("fatal****", params[0]!!)
+            var yeniOlusanDosyaninKlasoru = File("/storage/emulated/0/DCIM/yeniInstagramKotlinApp/compressed/")
             if (yeniOlusanDosyaninKlasoru.isDirectory || yeniOlusanDosyaninKlasoru.mkdirs()) {
-                var yeniDosyaninPath = SiliCompressor.with(myFragment.context).compressVideo(params[0], yeniOlusanDosyaninKlasoru.path)
+                Log.e("*****", params[0] + "-----" + yeniOlusanDosyaninKlasoru.path)
+                var yeniDosyaninPath = SiliCompressor.with(myFragment.context).compressVideo(params[0], yeniOlusanDosyaninKlasoru.path+"")
+                Log.e("fatal****", "sili geçti")
+
                 return yeniDosyaninPath
             }
+
             return null
+
         }
 
         override fun onPostExecute(yeniDosyaninPath: String?) {
-            if (!yeniDosyaninPath.isNullOrEmpty()){
+            if (!yeniDosyaninPath.isNullOrEmpty()) {
                 compressFragment.dismiss()
-
                 (myFragment as ShareNextFragment).uploadStorage(yeniDosyaninPath)
+                Log.e("*******", "onPostExecute: " )
             }
             super.onPostExecute(yeniDosyaninPath)
 

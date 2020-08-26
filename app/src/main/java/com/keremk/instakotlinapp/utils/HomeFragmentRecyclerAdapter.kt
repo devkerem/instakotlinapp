@@ -1,9 +1,7 @@
 package com.keremk.instakotlinapp.utils
 
 import android.content.Context
-import android.os.Build
-import android.text.Html
-import android.text.Spanned
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,46 +12,96 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.hoanganhtuan95ptit.autoplayvideorecyclerview.VideoHolder
 import com.keremk.instakotlinapp.Generic.CommentFragment
+import com.keremk.instakotlinapp.Generic.UserProfileActivity
 import com.keremk.instakotlinapp.Home.HomeActivity
 import com.keremk.instakotlinapp.Models.UserPosts
+import com.keremk.instakotlinapp.Profile.ProfileActivity
 import com.keremk.instakotlinapp.R
+import com.keremk.instakotlinapp.VideoRecyclerView.view.Video
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.tek_post_recycler_item.view.*
 import org.greenrobot.eventbus.EventBus
 import java.util.*
 
-class HomeFragmentRecyclerAdapter(var context: Context, var tumGonderiler: ArrayList<UserPosts>) : RecyclerView.Adapter<HomeFragmentRecyclerAdapter.ViewHolder>() {
+/**
+ * Created by Emre on 5.06.2018.
+ */
+class HomeFragmentRecyclerAdapter(var context: Context, var tumGonderiler: ArrayList<UserPosts>) : RecyclerView.Adapter<HomeFragmentRecyclerAdapter.MyViewHolder>() {
+
     init {
         Collections.sort(tumGonderiler, object : Comparator<UserPosts> {
             override fun compare(o1: UserPosts?, o2: UserPosts?): Int {
                 if (o1!!.postYuklenmeTarih!! > o2!!.postYuklenmeTarih!!) {
                     return -1
-                } else {
-                    return 1
-                }
+                } else return 1
             }
-
         })
-    }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var viewHolder = LayoutInflater.from(context).inflate(R.layout.tek_post_recycler_item, parent, false)
-        return ViewHolder(viewHolder, context)
     }
 
     override fun getItemCount(): Int {
         return tumGonderiler.size
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.setData(position, tumGonderiler.get(position))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        var viewHolder = LayoutInflater.from(context).inflate(R.layout.tek_post_recycler_item, parent, false)
+
+        return MyViewHolder(viewHolder, context)
     }
 
-    class ViewHolder(itemView: View, myHomeActivity: Context) : RecyclerView.ViewHolder(itemView) {
+
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+
+        var videoMu = false
+        var dosyaYolu = tumGonderiler.get(position).postURL
+        //https://asdasdasdasdasdasd.mp4
+        var dosyaTuru = dosyaYolu!!.substring(dosyaYolu.lastIndexOf("."), dosyaYolu.lastIndexOf(".") + 4)
+
+        if (dosyaTuru.equals(".mp4")) {
+            videoMu = true
+
+            holder.videoCameraAnim.start()
+            holder.videoKaranlik.visibility = View.VISIBLE
+        }
+
+        holder.setData(position, tumGonderiler.get(position), videoMu)
+    }
+
+
+    class MyViewHolder(itemView: View?, myHomeActivity: Context) : VideoHolder(itemView) {
+
+        var olusturulanElemanVideoMu = false
+
+        override fun getVideoLayout(): View? {
+
+            if (olusturulanElemanVideoMu) {
+                return myVideo
+            } else return null
+
+        }
+
+        override fun playVideo() {
+            if (olusturulanElemanVideoMu) {
+                myVideo.play {
+                    gonderi.visibility = View.GONE
+                    videoKaranlik.visibility = View.GONE
+                    videoCameraAnim.stop()
+                }
+            }
+        }
+
+        override fun stopVideo() {
+            if (olusturulanElemanVideoMu) {
+                videoCameraAnim.stop()
+                myVideo.stop()
+            }
+        }
+
         var tumLayout = itemView as ConstraintLayout
         var profileImage = tumLayout.imgUserProfile
-        var usernameTitle = tumLayout.tvKullaniciAdiBaslik
+        var userNameTitle = tumLayout.tvKullaniciAdiBaslik
         var gonderi = tumLayout.imgPostResim
         var userNameveAciklama = tumLayout.tvKullaniciAdiveAciklama
         var gonderiKacZamanOnce = tumLayout.tvKacZamanOnce
@@ -62,81 +110,200 @@ class HomeFragmentRecyclerAdapter(var context: Context, var tumGonderiler: Array
         var myHomeActivity = myHomeActivity
         var mInstaLikeView = tumLayout.insta_like_view
         var begenmeSayisi = tumLayout.tvBegenmeSayisi
-        fun setData(position: Int, oAnkiGonderi: UserPosts) {
-            usernameTitle.setText(oAnkiGonderi.userName)
-            UniversalImageLoader.setImage(oAnkiGonderi.postURL!!, gonderi, null, "")
-            UniversalImageLoader.setImage(oAnkiGonderi.userPhotoURL!!, profileImage, null, "")
-            var userNameveAciklamaText="<font color=#000>"+oAnkiGonderi.userName.toString()+"</font>"+" "+oAnkiGonderi.postAciklama
+        var yorumlariGoster = tumLayout.tvYorumlariGoster
+        var myVideo = tumLayout.videoView
+        var videoCameraAnim = tumLayout.cameraAnimation
+        var videoKaranlik = tumLayout.videoKaranlik
+
+
+        fun setData(position: Int, oankiGonderi: UserPosts, videoMu: Boolean) {
+
+            olusturulanElemanVideoMu = videoMu
+            if (olusturulanElemanVideoMu) {
+                myVideo.visibility = View.VISIBLE
+                gonderi.visibility = View.GONE
+                myVideo.setVideo(Video(oankiGonderi.postURL, 0))
+            } else {
+                myVideo.visibility = View.GONE
+                gonderi.visibility = View.VISIBLE
+                UniversalImageLoader.setImage(oankiGonderi.postURL!!, gonderi, null, "")
+            }
+
+            userNameTitle.setText(oankiGonderi.userName)
+
+            userNameTitle.setOnClickListener {
+                var tiklanilanUserID = oankiGonderi.userID
+                if (!tiklanilanUserID!!.equals(FirebaseAuth.getInstance().currentUser!!.uid)) {
+                    var intent = Intent(myHomeActivity, UserProfileActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                    intent.putExtra("secilenUserID", tiklanilanUserID)
+                    myHomeActivity.startActivity(intent)
+                } else {
+                    var intent = Intent(myHomeActivity, ProfileActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                    myHomeActivity.startActivity(intent)
+                }
+            }
+
+            /*var userNameveAciklamaText="<font color=#000>"+oankiGonderi.userName.toString()+"</font>"+" "+oankiGonderi.postAciklama
             var sonuc:Spanned?=null
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
                 sonuc= Html.fromHtml(userNameveAciklamaText,Html.FROM_HTML_MODE_LEGACY)
             }else {
                 sonuc=Html.fromHtml(userNameveAciklamaText)
-            }
-            userNameveAciklama.setText(sonuc)
-            gonderiKacZamanOnce.setText(TimeAgo.getTimeAgo(oAnkiGonderi.postYuklenmeTarih!!))
-            begeniKontrol(oAnkiGonderi)
+            }*/
+            userNameveAciklama.setText(oankiGonderi.userName + " " + oankiGonderi.postAciklama)
+
+            UniversalImageLoader.setImage(oankiGonderi.userPhotoURL!!, profileImage, null, "")
+            gonderiKacZamanOnce.setText(TimeAgo.getTimeAgo(oankiGonderi.postYuklenmeTarih!!))
+
+            begeniKontrol(oankiGonderi)
+            yorumlariGoruntule(position, oankiGonderi)
+
+
             yorumYap.setOnClickListener {
-                EventBus.getDefault().postSticky(EventbusDataEvents.YorumYapilacakGonderininIDsiniGonder(oAnkiGonderi!!.postID))
-                (myHomeActivity as HomeActivity).homeViewPager.visibility = View.GONE
-                (myHomeActivity as HomeActivity).homeFragmentContainer.visibility = View.VISIBLE
-                val transaction = (myHomeActivity as HomeActivity).supportFragmentManager.beginTransaction()
-                transaction.replace(R.id.homeFragmentContainer, CommentFragment())
-                transaction.addToBackStack("commentFragmentEklendi")
-                transaction.commit()
+                if (myVideo.visibility == View.VISIBLE) {
+                    myVideo.stop()
+                }
+                yorumlarFragmentiniBaslat(oankiGonderi)
             }
+
+            yorumlariGoster.setOnClickListener {
+                yorumlarFragmentiniBaslat(oankiGonderi)
+            }
+
             gonderiBegen.setOnClickListener {
+
                 var mRef = FirebaseDatabase.getInstance().reference
-                val userID = FirebaseAuth.getInstance().currentUser!!.uid
-                mRef.child("likes").child(oAnkiGonderi.postID!!).addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onCancelled(error: DatabaseError) {}
+                var userID = FirebaseAuth.getInstance().currentUser!!.uid
+                mRef.child("likes").child(oankiGonderi.postID!!).addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onCancelled(p0: DatabaseError) {
+
+                    }
+
                     override fun onDataChange(p0: DataSnapshot) {
                         if (p0!!.hasChild(userID)) {
-                            mRef.child("likes").child(oAnkiGonderi.postID!!).child(userID).removeValue()
+
+                            mRef.child("likes").child(oankiGonderi.postID!!).child(userID).removeValue()
                             gonderiBegen.setImageResource(R.drawable.ic_like)
+
                         } else {
-                            mRef.child("likes").child(oAnkiGonderi.postID!!).child(userID).setValue(userID)
+
+                            mRef.child("likes").child(oankiGonderi.postID!!).child(userID).setValue(userID)
                             gonderiBegen.setImageResource(R.drawable.ic_begen_kirmizi)
                             mInstaLikeView.start()
-                            begenmeSayisi.visibility=View.VISIBLE
-                            begenmeSayisi.setText(""+p0!!.childrenCount!!.toString()+" beğenme")
+                            begenmeSayisi.visibility = View.VISIBLE
+                            begenmeSayisi.setText("" + p0!!.childrenCount!!.toString() + " beğenme")
                         }
                     }
                 })
             }
-            var ilkTiklama:Long = 0
-            var sonTiklama:Long = 0
+
+            var ilkTiklama: Long = 0
+            var sonTiklama: Long = 0
+
             gonderi.setOnClickListener {
                 ilkTiklama = sonTiklama
                 sonTiklama = System.currentTimeMillis()
-                if (sonTiklama-ilkTiklama<300){
+
+                if (sonTiklama - ilkTiklama < 300) {
                     mInstaLikeView.start()
-                    FirebaseDatabase.getInstance().reference.child("likes").child(oAnkiGonderi.postID!!)
-                        .child(FirebaseAuth.getInstance().currentUser!!.uid).setValue(FirebaseAuth.getInstance().currentUser!!.uid)
+                    FirebaseDatabase.getInstance().getReference()
+                        .child("likes").child(oankiGonderi.postID!!)
+                        .child(FirebaseAuth.getInstance().currentUser!!.uid)
+                        .setValue(FirebaseAuth.getInstance().currentUser!!.uid)
+                    sonTiklama = 0
                 }
             }
+            myVideo.setOnClickListener {
+                ilkTiklama = sonTiklama
+                sonTiklama = System.currentTimeMillis()
+
+                if (sonTiklama - ilkTiklama < 300) {
+                    mInstaLikeView.start()
+                    FirebaseDatabase.getInstance().getReference()
+                        .child("likes").child(oankiGonderi.postID!!)
+                        .child(FirebaseAuth.getInstance().currentUser!!.uid)
+                        .setValue(FirebaseAuth.getInstance().currentUser!!.uid)
+                    sonTiklama = 0
+                }
+            }
+
+
         }
 
-        fun begeniKontrol(oAnkiGonderi: UserPosts) {
+        fun yorumlarFragmentiniBaslat(oankiGonderi: UserPosts) {
+            EventBus.getDefault().postSticky(EventbusDataEvents.YorumYapilacakGonderininIDsiniGonder(oankiGonderi!!.postID))
+
+            (myHomeActivity as HomeActivity).homeViewPager.visibility = View.INVISIBLE
+            (myHomeActivity as HomeActivity).homeFragmentContainer.visibility = View.VISIBLE
+
+
+            var transaction = (myHomeActivity as HomeActivity).supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.homeFragmentContainer, CommentFragment())
+            transaction.addToBackStack("commentFragmentEklendi")
+            transaction.commit()
+        }
+
+        fun yorumlariGoruntule(position: Int, oankiGonderi: UserPosts) {
+
             var mRef = FirebaseDatabase.getInstance().reference
-            var userId = FirebaseAuth.getInstance().currentUser!!.uid
-            mRef.child("likes").child(oAnkiGonderi.postID!!).addValueEventListener(object : ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {}
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if(snapshot!!.getValue()!=null){
-                        begenmeSayisi.visibility=View.VISIBLE
-                        begenmeSayisi.setText(""+snapshot!!.childrenCount!!.toString()+" beğenme")
-                    }else {
-                        begenmeSayisi.visibility=View.GONE
+            mRef.child("comments").child(oankiGonderi!!.postID!!).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+
+                }
+
+                override fun onDataChange(p0: DataSnapshot) {
+                    var yorumSayisi = 0
+
+                    for (ds in p0!!.children) {
+                        if (!ds!!.key.toString().equals(oankiGonderi!!.postID)) {
+                            yorumSayisi++
+                        }
+                    }
+                    if (yorumSayisi >= 1) {
+                        yorumlariGoster.visibility = View.VISIBLE
+                        yorumlariGoster.setText(yorumSayisi.toString() + " yorumun tümünü gör")
+                    } else {
+                        yorumlariGoster.visibility = View.GONE
                     }
 
-                    if (snapshot.hasChild(userId)) {
+                }
+
+
+            })
+
+        }
+
+        fun begeniKontrol(oankiGonderi: UserPosts) {
+
+            var mRef = FirebaseDatabase.getInstance().reference
+            var userID = FirebaseAuth.getInstance().currentUser!!.uid
+            mRef.child("likes").child(oankiGonderi.postID!!).addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+
+                }
+
+                override fun onDataChange(p0: DataSnapshot) {
+
+                    if (p0!!.getValue() != null) {
+                        begenmeSayisi.visibility = View.VISIBLE
+                        begenmeSayisi.setText("" + p0!!.childrenCount!!.toString() + " beğenme")
+                    } else {
+                        begenmeSayisi.visibility = View.GONE
+                    }
+
+                    if (p0!!.hasChild(userID)) {
                         gonderiBegen.setImageResource(R.drawable.ic_begen_kirmizi)
-                    }else{
+                    } else {
                         gonderiBegen.setImageResource(R.drawable.ic_like)
                     }
                 }
+
+
             })
+
+
         }
+
+
     }
 }
